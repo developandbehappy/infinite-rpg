@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #222;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.game-container {
+    display: flex;
+    position: relative;
+}
+
+canvas {
+    background-color: #000;
+    display: block;
+}
+
+.ui-panel {
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-left: 1px solid #555;
+}
+
+.stats, .weapon-info, .score, .controls {
+    margin-bottom: 20px;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
+
+#restartButton {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.floating-text {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    pointer-events: none;
+    animation: float-up 1s forwards;
+}
+
+@keyframes float-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
+
+.item-pickup {
+    position: absolute;
+    background-color: gold;
+    color: black;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    pointer-events: none;
+    animation: fade-out 2s forwards;
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
