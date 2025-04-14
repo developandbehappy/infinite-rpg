@@ -885,26 +885,107 @@ function updateBullets() {
 
 // Обновление монстров
 function updateMonsters() {
-    for (let monster of monsters) {
-        // Движение к игроку
+    // Очищаем массив монстров от тех, кто слишком далеко
+    for (let i = monsters.length - 1; i >= 0; i--) {
+        const monster = monsters[i];
+
+        // Добавляем и обновляем счетчик жизни монстра, если его нет
+        if (!monster.lifeTime) {
+            monster.lifeTime = 0;
+        }
+        monster.lifeTime++;
+
+        // Удаляем монстра, если он живет слишком долго (около 2 минут при 60 FPS)
+        if (monster.lifeTime > 7200) {
+            monsters.splice(i, 1);
+            continue;
+        }
+
+        // Вычисляем расстояние до игрока
         const dx = player.x - monster.x;
         const dy = player.y - monster.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Двигаем монстра только если он не слишком далеко
-        if (distance < 800) {
-            const dirX = dx / distance;
-            const dirY = dy / distance;
+        // Удаляем монстра, если он слишком далеко от игрока
+        if (distance > 3000) {
+            monsters.splice(i, 1);
+            continue;
+        }
+    }
 
+    for (let monster of monsters) {
+        // Движение к игроку только если монстр не слишком далеко
+        const dx = player.x - monster.x;
+        const dy = player.y - monster.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 800) {
+            // Базовое направление к игроку
+            let dirX = dx / distance;
+            let dirY = dy / distance;
+
+            // Проверяем наличие стен на пути к игроку
+            const checkAheadDistance = monster.speed * 2;
+            const checkX = monster.x + dirX * checkAheadDistance;
+            const checkY = monster.y + dirY * checkAheadDistance;
+
+            // Проверка на стену прямо по пути
+            const straightPath = getTileAt(checkX, checkY);
+
+            // Если прямо впереди стена, пытаемся найти обходной путь
+            if (straightPath && straightPath.isWall) {
+                // Пробуем 8 различных направлений для обхода
+                const angleIncrement = Math.PI / 4;
+                let bestDirection = null;
+                let bestDistance = Infinity;
+
+                for (let i = 0; i < 8; i++) {
+                    const angle = i * angleIncrement;
+                    const testDirX = Math.cos(angle);
+                    const testDirY = Math.sin(angle);
+
+                    const testX = monster.x + testDirX * checkAheadDistance;
+                    const testY = monster.y + testDirY * checkAheadDistance;
+
+                    const testTile = getTileAt(testX, testY);
+
+                    if (!testTile || !testTile.isWall) {
+                        // Вычисляем, насколько это направление приближает к игроку
+                        const distToPlayer = Math.sqrt(
+                            Math.pow(player.x - testX, 2) +
+                            Math.pow(player.y - testY, 2)
+                        );
+
+                        if (distToPlayer < bestDistance) {
+                            bestDistance = distToPlayer;
+                            bestDirection = { x: testDirX, y: testDirY };
+                        }
+                    }
+                }
+
+                // Если нашли лучшее направление, используем его
+                if (bestDirection) {
+                    dirX = bestDirection.x;
+                    dirY = bestDirection.y;
+                }
+                // Если не нашли пути, замедляем монстра
+                else {
+                    dirX *= 0.5;
+                    dirY *= 0.5;
+                }
+            }
+
+            // Рассчитываем новую позицию с учетом скорости
             const newX = monster.x + dirX * monster.speed;
             const newY = monster.y + dirY * monster.speed;
 
-            // Проверка столкновений со стенами
+            // Проверка на столкновение с ближайшими стенами
             const tileNewX = getTileAt(newX, monster.y);
             const tileNewY = getTileAt(monster.x, newY);
 
-            if (!tileNewX.isWall) monster.x = newX;
-            if (!tileNewY.isWall) monster.y = newY;
+            // Обновляем позицию только если нет стены
+            if (!tileNewX || !tileNewX.isWall) monster.x = newX;
+            if (!tileNewY || !tileNewY.isWall) monster.y = newY;
         }
     }
 
