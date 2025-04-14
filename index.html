@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бесконечный лабиринт RPG</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div class="ui-panel">
+            <div class="stats">
+                <div>Уровень: <span id="level">1</span></div>
+                <div>Опыт: <span id="xp">0</span>/<span id="xpToLevel">100</span></div>
+                <div>Здоровье: <span id="health">100</span>/<span id="maxHealth">100</span></div>
+                <div>Урон: <span id="damage">10</span></div>
+                <div>Скорость атаки: <span id="attackSpeed">1</span>/сек</div>
+            </div>
+            <div class="weapon-info">
+                <div>Оружие: <span id="weaponName">Пистолет</span></div>
+                <div>Уровень: <span id="weaponLevel">1</span></div>
+            </div>
+            <div class="score">Счёт: <span id="score">0</span></div>
+            <div class="controls">
+                <p>Управление: WASD для передвижения</p>
+                <p>Мышь для прицеливания и стрельбы</p>
+            </div>
+        </div>
+    </div>
+    <div id="gameOver" class="game-over">
+        <h2>Game Over</h2>
+        <p>Счёт: <span id="finalScore">0</span></p>
+        <button id="restartButton">Начать заново</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
